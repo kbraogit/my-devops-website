@@ -13,19 +13,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Setup SSH
+    - name: Deploy to server
       run: |
         mkdir -p ~/.ssh
         echo "$SSH_KEY" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
-        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "cd /var/www/html && sudo git pull origin main && echo 'Deployed at $(date)'"
       env:
         SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
-    
-    - name: Deploy to server
-      run: |
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-          cd /var/www/html
-          sudo git pull origin main
-          echo "Deployment completed at $(date)"
-        EOF
