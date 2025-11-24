@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Deploy Docker Container to AWS
 
 on:
   push:
@@ -13,11 +13,31 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    - name: Deploy to server
+    - name: Deploy to AWS Server
       run: |
         mkdir -p ~/.ssh
         echo "$SSH_KEY" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "cd /var/www/html && sudo git pull origin main && echo 'Deployed at $(date)'"
+        
+        # Copy files to server
+        scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r * ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/ubuntu/website/
+        
+        # Build and run Docker container on server
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          cd /home/ubuntu/website
+          
+          # Stop and remove old container if exists
+          docker stop my-website-container 2>/dev/null || true
+          docker rm my-website-container 2>/dev/null || true
+          
+          # Build new image
+          docker build -t my-website:latest .
+          
+          # Run new container
+          docker run -d --name my-website-container -p 80:80 my-website:latest
+          
+          echo "✅ Docker container deployed successfully!"
+          docker ps
+        EOF
       env:
         SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
