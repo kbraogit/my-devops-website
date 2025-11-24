@@ -1,19 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>I Did It!</title>
-    <style>
-        body { 
-            font-family: Arial; 
-            text-align: center; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 50px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My DevOps Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>🚀 I Built a CI/CD Pipeline! Yoooo🚀</h1>
-    <h3>Woww this is version 2</h3>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <h1>🚀 Welcome to My DevOps Portfolio</h1>
+        
+        <div class="card">
+            <h2>Automated CI/CD Pipeline</h2>
+            <p>This website is automatically deployed using:</p>
+            <ul style="list-style: none; padding: 1rem 0;">
+                <li>✅ GitHub Actions</li>
+                <li>✅ Docker Containers</li>
+                <li>✅ AWS EC2</li>
+                <li>✅ Nginx Web Server</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <p><strong>Last Updated:</strong> <span id="current-date"></span></p>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
 </body>
 </html>
